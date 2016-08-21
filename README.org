@@ -1,6 +1,8 @@
 * flimenu
 Flimenu provides functions to flatten imenu indexes and a modes to
 apply those functions automatically.
+* Installation
+Install from MELPA (coming soon) with ~M-x package-install flimenu~. See the [[https://github.com/milkypostman/melpa][melpa repository]] for details about how to set up MELPA if you have not already done so.
 * Configuration
 ** Standard
 #+BEGIN_SRC emacs-lisp
