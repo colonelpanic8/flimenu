@@ -1,3 +1,4 @@
+[[http://melpa.org/#/flimenu][file:http://melpa.org/packages/flimenu-badge.svg]]
 * flimenu
 Flimenu provides functions to flatten imenu indexes and a modes to
 apply those functions automatically.
