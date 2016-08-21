@@ -35,7 +35,7 @@
   :group 'imenu
   :prefix "flimenu-")
 
-(defcustom flimenu-imenu-separator "."
+(defcustom flimenu-imenu-separator "/"
   "The string to use to join the titles of nested entries."
   :type '(string)
   :group 'flimenu)
