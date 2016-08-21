@@ -6,7 +6,7 @@
 ;; Keywords: imenu browse structure hook mode
 ;; URL: https://github.com/IvanMalison/flimenu
 ;; Version: 0.0.0
-;; Package-Requires: ((dash "2.10.0") (emacs "24.4") (cl-lib "0.5"))
+;; Package-Requires: ((dash "2.10.0") (emacs "24.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
