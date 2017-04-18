@@ -3,7 +3,7 @@
 ;; Copyright (C) 2016 Ivan Malison
 
 ;; Author: Ivan Malison <IvanMalison@gmail.com>
-;; Keywords: imenu browse structure hook mode
+;; Keywords: imenu browse structure hook mode matching tools convenience files
 ;; URL: https://github.com/IvanMalison/flimenu
 ;; Version: 0.0.0
 ;; Package-Requires: ((dash "2.10.0") (emacs "24.4"))
