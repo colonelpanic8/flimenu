@@ -57,6 +57,14 @@ enables the addition of entries for its internal nodes."
   :type '(repeat symbol)
   :group 'flimenu)
 
+(defcustom flimenu-auto-hide-rescan t
+  "Auto hide *Rescan* item.
+
+If `imenu-auto-rescan' and this option are non-nil flimenu will
+hide the *Rescan* item."
+  :type '(boolean)
+  :group 'flimenu)
+
 ;;;###autoload
 (define-minor-mode flimenu-mode
   "Toggle the automatic flattening of imenu indexes."
@@ -100,7 +108,13 @@ enables the addition of entries for its internal nodes."
         ;; Leaf Node
         (list (cons new-entry-name rest))))))
 
+(defvar imenu-auto-rescan)
 (defun flimenu-flatten-imenu-index (index)
+  (when (and imenu-auto-rescan
+             flimenu-auto-hide-rescan)
+    (let ((rescan (assoc "*Rescan*" index)))
+      (when rescan
+        (setq index (delete rescan index)))))
   (cl-mapcan 'flimenu-flatten-index-entry index))
 
 (defun flimenu-make-current-imenu-index-flat ()
