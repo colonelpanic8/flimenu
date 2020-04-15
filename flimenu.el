@@ -6,7 +6,7 @@
 ;; Keywords: imenu browse structure hook mode matching tools convenience files
 ;; URL: https://github.com/IvanMalison/flimenu
 ;; Version: 0.0.0
-;; Package-Requires: ((dash "2.10.0") (emacs "24.4"))
+;; Package-Requires: ((emacs "24.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'dash)
 
 (defgroup flimenu ()
   "Flimenu minor mode."
@@ -76,7 +75,7 @@ enables the addition of entries for its internal nodes."
    (flimenu-mode t)))
 
 (defun flimenu-get-marker-from-string (string)
-  (--first (markerp it) (text-properties-at 0 string)))
+  (cl-find-if #'markerp (text-properties-at 0 string)))
 
 (cl-defun flimenu-flatten-index-entry (index-entry &optional (prefix ""))
   (cl-destructuring-bind (entry-name . rest) index-entry
