@@ -36,8 +36,13 @@
   :prefix "flimenu-")
 
 (defcustom flimenu-imenu-separator "/"
-  "The string to use to join the titles of nested entries."
-  :type '(string)
+  "The string or function to use to join the titles of nested entries.
+
+If given a function it receives two arguments. The entry name and
+the prefix as optional argument and should return the string used
+for display. If called without prefix it should return the string
+used as prefix for the next nesting level."
+  :type '(choice string function)
   :group 'flimenu)
 
 (defcustom flimenu-imenu-get-markers-from-entry-strings t
@@ -75,13 +80,17 @@ enables the addition of entries for its internal nodes."
 
 (cl-defun flimenu-flatten-index-entry (index-entry &optional (prefix ""))
   (cl-destructuring-bind (entry-name . rest) index-entry
-    (let ((new-entry-name (concat prefix entry-name))
+    (let ((new-entry-name (if (functionp flimenu-imenu-separator)
+                              (funcall flimenu-imenu-separator entry-name prefix)
+                            (concat prefix entry-name)))
           (entry-marker
            (when flimenu-imenu-get-markers-from-entry-strings
                (flimenu-get-marker-from-string entry-name))))
       (if (listp rest)
           ;; Internal Node
-          (let* ((new-prefix (concat new-entry-name flimenu-imenu-separator))
+          (let* ((new-prefix (if (functionp flimenu-imenu-separator)
+                                 (funcall flimenu-imenu-separator new-entry-name)
+                               (concat new-entry-name flimenu-imenu-separator)))
                  (flattened-subentries
                   (cl-mapcan (lambda (entry)
                                (flimenu-flatten-index-entry entry new-prefix))
