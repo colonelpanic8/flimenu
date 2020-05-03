@@ -37,10 +37,9 @@
 (defcustom flimenu-imenu-separator "/"
   "The string or function to use to join the titles of nested entries.
 
-If given a function it receives two arguments. The entry name and
-the prefix as optional argument and should return the string used
-for display. If called without prefix it should return the string
-used as prefix for the next nesting level."
+If given a function it receives two arguments: The entry name and
+optionally the list of prefixes of the tree path leading to this
+item. The returned value is the string to use for display."
   :type '(choice string function)
   :group 'flimenu)
 
@@ -85,27 +84,32 @@ hide the *Rescan* item."
 (defun flimenu-get-marker-from-string (string)
   (cl-find-if #'markerp (text-properties-at 0 string)))
 
-(cl-defun flimenu-flatten-index-entry (index-entry &optional (prefix ""))
+(cl-defun flimenu-flatten-index-entry (index-entry &optional (prefix "") plist)
   (cl-destructuring-bind (entry-name . rest) index-entry
-    (let ((new-entry-name (if (functionp flimenu-imenu-separator)
-                              (funcall flimenu-imenu-separator entry-name prefix)
-                            (concat prefix entry-name)))
+    (let ((new-entry-name (cond ((functionp flimenu-imenu-separator)
+                                 entry-name)
+                                (t
+                                 (concat prefix entry-name))))
           (entry-marker
            (when flimenu-imenu-get-markers-from-entry-strings
-               (flimenu-get-marker-from-string entry-name))))
+             (flimenu-get-marker-from-string entry-name))))
       (if (listp rest)
           ;; Internal Node
-          (let* ((new-prefix (if (functionp flimenu-imenu-separator)
-                                 (funcall flimenu-imenu-separator new-entry-name)
-                               (concat new-entry-name flimenu-imenu-separator)))
+          (let* ((new-prefix (cond ((functionp flimenu-imenu-separator)
+                                    (prog1 nil
+                                      (push new-entry-name plist)))
+                                   (t
+                                    (concat new-entry-name flimenu-imenu-separator))))
                  (flattened-subentries
                   (cl-mapcan (lambda (entry)
-                               (flimenu-flatten-index-entry entry new-prefix))
+                               (flimenu-flatten-index-entry entry new-prefix plist))
                              rest)))
             (if entry-marker
                 (cons (cons new-entry-name entry-marker) flattened-subentries)
               flattened-subentries))
         ;; Leaf Node
+        (put-text-property
+         0 1 'flimenu--prefix-list plist new-entry-name)
         (list (cons new-entry-name rest))))))
 
 (defvar imenu-auto-rescan)
@@ -115,7 +119,16 @@ hide the *Rescan* item."
     (let ((rescan (assoc "*Rescan*" index)))
       (when rescan
         (setq index (delete rescan index)))))
-  (cl-mapcan 'flimenu-flatten-index-entry index))
+  (let ((items (cl-mapcan 'flimenu-flatten-index-entry index))
+        (nitems ()))
+    (if (not (functionp flimenu-imenu-separator))
+        items
+      (dolist (item items (nreverse nitems))
+        (push (cons (funcall flimenu-imenu-separator
+                             (car item)
+                             (get-text-property 0 'flimenu--prefix-list (car item)))
+                    (cdr item))
+              nitems)))))
 
 (defun flimenu-make-current-imenu-index-flat ()
   (let ((original-imenu-function imenu-create-index-function))
