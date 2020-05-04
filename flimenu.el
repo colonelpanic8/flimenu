@@ -127,7 +127,8 @@ hide the *Rescan* item."
       (dolist (item items (nreverse nitems))
         (push (cons (funcall flimenu-imenu-separator
                              (car item)
-                             (get-text-property 0 'flimenu--prefix-list (car item)))
+                             (nreverse
+                              (get-text-property 0 'flimenu--prefix-list (car item))))
                     (cdr item))
               nitems)))))
 
