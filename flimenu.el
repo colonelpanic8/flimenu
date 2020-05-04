@@ -84,6 +84,7 @@ hide the *Rescan* item."
 (defun flimenu-get-marker-from-string (string)
   (cl-find-if #'markerp (text-properties-at 0 string)))
 
+(declare-function imenu--subalist-p "imenu")
 (cl-defun flimenu-flatten-index-entry (index-entry &optional (prefix "") plist)
   (cl-destructuring-bind (entry-name . rest) index-entry
     (let ((new-entry-name (cond ((functionp flimenu-imenu-separator)
@@ -93,7 +94,7 @@ hide the *Rescan* item."
           (entry-marker
            (when flimenu-imenu-get-markers-from-entry-strings
              (flimenu-get-marker-from-string entry-name))))
-      (if (listp rest)
+      (if (imenu--subalist-p index-entry)
           ;; Internal Node
           (let* ((new-prefix (cond ((functionp flimenu-imenu-separator)
                                     (prog1 nil
