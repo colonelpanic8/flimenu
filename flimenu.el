@@ -127,15 +127,15 @@ hide the *Rescan* item."
         (setq index (delete rescan index)))))
   (let ((items (cl-mapcan 'flimenu-flatten-index-entry index))
         (nitems ()))
-    (if (not (functionp flimenu-imenu-separator))
-        items
-      (dolist (item items (nreverse nitems))
-        (push (cons (funcall flimenu-imenu-separator
-                             (car item)
-                             (nreverse
-                              (get-text-property 0 'flimenu--prefix-list (car item))))
-                    (cdr item))
-              nitems)))))
+    (if (functionp flimenu-imenu-separator)
+        (dolist (item items (nreverse nitems))
+          (push (cons (funcall flimenu-imenu-separator
+                               (car item)
+                               (nreverse
+                                (get-text-property 0 'flimenu--prefix-list (car item))))
+                      (cdr item))
+                nitems))
+      items)))
 
 (defun flimenu-make-current-imenu-index-flat ()
   (let ((original-imenu-function imenu-create-index-function))
