@@ -87,7 +87,8 @@ hide the *Rescan* item."
 (declare-function imenu--subalist-p "imenu")
 (cl-defun flimenu-flatten-index-entry (index-entry &optional (prefix "") plist)
   (cl-destructuring-bind (entry-name . rest) index-entry
-    (let ((new-entry-name (cond ((functionp flimenu-imenu-separator)
+    (let ((plist (copy-sequence plist))
+          (new-entry-name (cond ((functionp flimenu-imenu-separator)
                                  entry-name)
                                 (t
                                  (concat prefix entry-name))))
@@ -106,7 +107,11 @@ hide the *Rescan* item."
                                (flimenu-flatten-index-entry entry new-prefix plist))
                              rest)))
             (if entry-marker
-                (cons (cons new-entry-name entry-marker) flattened-subentries)
+                (progn
+                  (put-text-property
+                   0 1 'flimenu--prefix-list (cdr plist)
+                   new-entry-name)
+                  (cons (cons new-entry-name entry-marker) flattened-subentries))
               flattened-subentries))
         ;; Leaf Node
         (put-text-property
