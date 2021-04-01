@@ -52,7 +52,7 @@ enables the addition of entries for its internal nodes."
   :group 'flimenu)
 
 (defcustom flimenu-ignore-modes-list nil
-  "Modes where smartparens mode is inactive if allowed globally."
+  "Modes where flimenu mode is inactive if allowed globally."
   :type '(repeat symbol)
   :group 'flimenu)
 
